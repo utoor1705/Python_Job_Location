@@ -4,34 +4,42 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
-from geotext import GeoText
+
 print("P1")
 
 df = pd.read_csv('data_full.csv', engine='python', encoding='utf-8', error_bad_lines=False)
-
-#Job File
 df1 = pd.read_csv('occupation-list.csv')
 
-print("P2")
-
+print('P1.25')
 #Remove unamed column
 df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
 
+print("P1.5")
 # Remove all titles with NAN
 title_data = df[df['Title'].notnull()].copy()
 
+
+print("P2")
 # Create a new column for Location
 title_data["Occupation"] = np.nan
 
+# Tokenize the titles
+for i in range( len(title_data['Title'])):
+    title_data['Title'].values[i] = title_data['Title'].values[i].lower()
+    title_data['Title'].values[i] = word_tokenize(title_data['Title'].values[i])
 
 print("P3")
 
+# Note 1 if city or country names was mentioned in the titles
 for i in range(len(title_data['Title'])):
     for j in df1['Occupation']:
-        if j.lower() in title_data['Title'].values[i].lower():
+        if j.lower() in title_data['Title'].values[i]:
             title_data["Occupation"].values[i] = 1
         else:
             title_data["Occupation"].values[i] = 0
+
+print("P4")
+output = title_data.to_csv('Location.csv', index = None, header=Tru
 
 print("P7")
 output = title_data.to_csv('Location.csv', index = None, header=True)
